@@ -1,7 +1,0 @@
-#ifndef INTERFACE
-#define INTERFACE
-
-#define COMPRIMENTO_JANELA (600)
-#define ALTURA_JANELA (600)
-
-#endif

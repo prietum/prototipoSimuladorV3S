@@ -32,6 +32,6 @@ FetchContent_MakeAvailable(box3d)
 add_library(raygui INTERFACE)
 target_include_directories(raygui INTERFACE ${raygui_SOURCE_DIR}/src)
 
-add_executable(main src/main.c src/sim.c src/gui.c)
+add_executable(main src/main.c src/items.c)
 target_include_directories(main PRIVATE include)
 target_link_libraries(main PRIVATE box3d raylib raygui)

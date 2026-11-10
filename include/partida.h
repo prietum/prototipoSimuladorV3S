@@ -1,9 +1,0 @@
-#ifndef PARTIDA
-#define PARTIDA
-
-#define QNTD_ROBOS_ESQ (2)
-#define QNTD_ROBOS_DRT (2)
-#define QNTD_ROBOS_TOTAL (QNTD_ROBOS_ESQ+QNTD_ROBOS_DRT)
-#define QNTD_BOLAS (1)
-
-#endif
