@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.4.0)
+cmake_minimum_required(VERSION 4.2.3)
 project(prototipo)
 
 #Esse comando compartilha com '.clangd' (exporta) os diretórios onde procurar headers.
@@ -32,6 +32,6 @@ FetchContent_MakeAvailable(box3d)
 add_library(raygui INTERFACE)
 target_include_directories(raygui INTERFACE ${raygui_SOURCE_DIR}/src)
 
-add_executable(main src/main.c src/simulado.c src/renderizado.c)
+add_executable(main src/main.c src/sim.c src/gui.c)
 target_include_directories(main PRIVATE include)
 target_link_libraries(main PRIVATE box3d raylib raygui)
