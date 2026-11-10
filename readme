@@ -1,0 +1,60 @@
+Mapa de dependências
+    Dependências externas: 'raylib', 'raygui', 'box3d'.
+    'X->Y' lê-se 'X depende de Y'.
+
+    'main' coordena o programa, separando a parte de interface e simulação.
+    main.c -> gui.c
+    main.c -> sim.c
+
+    'gui' é responsável pela renderização da interface.
+    gui.c -> raylib
+    gui.c -> raygui
+    gui.c -> gui.h
+    *raygui -> raylib (raygui é uma extensão de raylib)
+
+    'sim' é responsável pela simulação física.
+    sim.c -> box3d
+    sim.c -> sim.h
+
+Headers de configuração
+    'medidas.h' define medidas físicas, como as dimensões da arena e a massa dos robôs.
+    'partida.h' define configurações da partida, como a quantidade de robôs e de bolas.
+    'interface.h' define configurações da interface de usuário, como tamanho da janela.
+
+Modo de uso
+    Instale CMake (mínimo 4.4.4).
+    Instale Make
+    Crie uma pasta 'build' na pasta raíz.
+    Dentro de 'build' faça 'cmake ..' para gerar o sistema de compilação.
+    Dentro de build, rode o sistema de compilação gerado.
+        O comando necessário dependerá de qual sistema de compilação você escolheu.
+        Normalmente é 'make' ou 'ninja'.
+    Rode o executável 'main'.
+
+Como funciona?
+    Sistema de compilação
+    O projeto é feito de vários arquivos-fonte e headers, e os comandos necessários para compilar
+    todos eles são bastante extensos. Por isso, automatizamos isso com um sistema de compilação.
+    Make é um sistema de compilação, mas existem vários outros, como Ninja e etc.
+    Para compilar o projeto inteiro, basta rodar 'make', 'ninja', ou seja qual for o comando respectivo.
+
+    CMake
+    Contudo, precisamos que o sistema de compilação descreva as relações de dependência do nosso 
+    projeto. Fazer isso à mão é difícil, especialmente quando essas relações mudam.
+    Para essa etapa, automatizamos com CMake. CMake gera sistemas de compilação, dada as relações
+    de dependência.
+    CMake ---GERA---> sistema de compilação ---QUE GERA---> programa
+    CMake também cuida para que os comandos estejam conforme o seu sistema operacional: Linux, Windows, Mac...
+
+    Box3D
+    É uma biblioteca feita por Erin Catto, para simulação tridimensional. Amplamente utilizada tanto
+    para jogos quanto para projetos como o nosso. *Não abre janelas, nem renderiza nada.*
+
+    Raylib
+    É uma biblioteca feita por raysan5, para computação gráfica. Assim como Box3D, é bastante versátil.
+    Vale notar que ela só permite uma janela por vez. *Não simula física.*
+
+    Raygui
+    Uma extensão de raylib que disponibiliza elementos de interface como botões, painéis, etc. Vêm como
+    um único arquivo 'raygui.h', conhecido como 'single-file header library'. Diferente de Raylib e
+    Box3D, *raygui não compila em binário*, ao invés disso, é inclusa (copiada) na fonte.
