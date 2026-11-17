@@ -35,8 +35,6 @@ void desenha(void *userShape, b3WorldTransform transform, b3HexColor color, void
     Vector3 position = (Vector3){transform.p.x,transform.p.y,transform.p.z};
 
     // printf("desenha minhaShapePtr->tipo: %s\n", minhaShapePtr->tipo);
-
-    printf("desenha esfera\n");
     //pegar matriz de rotação da caixa com magia negra
     Matrix mat = QuaternionToMatrix((Quaternion){
         transform.q.v.x,
@@ -55,23 +53,23 @@ void desenha(void *userShape, b3WorldTransform transform, b3HexColor color, void
     rlMultMatrixf(MatrixToFloat(mat));
 
     if(strcmp(minhaShapePtr->tipo,"placa") == 0){
-        printf("desenha placa\n");
+        //printf("desenha placa\n");
         //tamanho da caixa
         Vector3 extents = {minhaShapePtr->extents.x*2,minhaShapePtr->extents.y*2,minhaShapePtr->extents.z*2};
         DrawCubeV((Vector3){0,0,0},extents,GRAY);
     }
     else if(strcmp(minhaShapePtr->tipo,"bola") == 0){
-        printf("desenha bola\n");
+        //printf("desenha bola\n");
         DrawSphere((Vector3){0,0,0},minhaShapePtr->radius,ORANGE);
     }
     else if(strcmp(minhaShapePtr->tipo,"roda") == 0){
-        printf("desenha roda\n");
+        //printf("desenha roda\n");
         Vector3 extents = {minhaShapePtr->extents.x*2,minhaShapePtr->extents.y*2,minhaShapePtr->extents.z*2};
 
         DrawCubeV((Vector3){0,0,0},extents,GREEN);
     }
     else if(strcmp(minhaShapePtr->tipo,"robo") == 0){
-        printf("desenha robo\n");
+        //printf("desenha robo\n");
         Vector3 extents = {minhaShapePtr->extents.x*2,minhaShapePtr->extents.y*2,minhaShapePtr->extents.z*2};
 
         DrawCubeV((Vector3){0,0,0},extents,BLUE);

@@ -2,6 +2,7 @@
 #include "box3d/id.h"
 #include "box3d/math_functions.h"
 #include "box3d/types.h"
+#include "raymath.h"
 #include <config.h>
 
 #include <stdio.h>
@@ -77,13 +78,13 @@ Roda *criaRoda(Mundo *mundoPtr, Robo *roboPtr, int esq){
     //printf("criaRoda mundoPtr->worldId: %d\n",mundoPtr->worldId.index1);
     //printf("criaRoda roboPtr->bodyId.world0: %d\n",roboPtr->bodyId.world0);
     //printf("criaRoda bodyId.world0: %d\n",bodyId.world0);
-    b3MotorJointDef jointDef = b3DefaultMotorJointDef();
+    b3WheelJointDef jointDef = b3DefaultWheelJointDef();
     jointDef.base.collideConnected = false;
     jointDef.base.bodyIdA = roboPtr->bodyId;
     jointDef.base.bodyIdB = bodyId;
     jointDef.base.localFrameA = b3Transform_identity;
     jointDef.base.localFrameB = b3Transform_identity;
-    b3JointId jointId = b3CreateMotorJoint(mundoPtr->worldId, &jointDef);
+    b3JointId jointId = b3CreateWheelJoint(mundoPtr->worldId, &jointDef);
 
     rodaPtr->tipo.tipo = 3;
     rodaPtr->bodyId = bodyId;
@@ -103,7 +104,7 @@ Robo *criaRobo(Mundo *mundoPtr){
 
     b3BodyDef bodyDef = b3DefaultBodyDef();
     bodyDef.type = b3_dynamicBody;
-    bodyDef.position = POSICAO_INICIAL_ROBO;
+    bodyDef.position = ORIGEM;
     b3BodyId bodyId = b3CreateBody(mundoPtr->worldId,&bodyDef);
 
     b3BoxHull boxHull = b3MakeBoxHull(DMNS_ROBO/2, DMNS_ROBO/2, DMNS_ROBO/2);
@@ -129,7 +130,7 @@ Bola *criaBola(Mundo *mundoPtr){
 
     b3BodyDef bodyDef = b3DefaultBodyDef();
     bodyDef.type = b3_dynamicBody;
-    bodyDef.position = POSICAO_INICIAL_ROBO;
+    bodyDef.position = POSICAO_BOLA_INICIO;
     b3BodyId bodyId = b3CreateBody(mundoPtr->worldId, &bodyDef);
 
     b3Sphere sphere = {.center = 0, .radius = RAIO_BOLA};
@@ -180,6 +181,18 @@ Mundo *criaMundo(
         roboPtr->time = roboId>=QNTD_ROBOS_ESQ;
         roboPtr->roboId = roboId;
         mundoPtr->robos[roboId]=roboPtr;
+
+        int esq = 1-2*roboPtr->time;
+        float amount;
+        if(roboPtr->time==0) amount = (float)(roboId)/(QNTD_ROBOS_ESQ-1);
+        else                amount = (float)(roboId-QNTD_ROBOS_ESQ)/(QNTD_ROBOS_DRT-1);
+        b3Pos posRobo = (b3Pos){
+            POSICAO_BOLA_BL.x*esq,
+            POSICAO_ROBO_EXTERNO.y,
+            Lerp(POSICAO_BOLA_BL.z, -POSICAO_BOLA_BL.z, amount),
+        };
+        printf("criaMundo posRobo: (x=%f, y=%f, z=%f)",posRobo.x,posRobo.y,posRobo.z);
+        b3Body_SetTransform(roboPtr->bodyId, posRobo, b3Quat_identity);
     }
 
     //Fazer bolas

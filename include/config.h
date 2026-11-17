@@ -1,5 +1,5 @@
 ////////////////// INICIALIZAÇÃO DA PARTIDA
-#define QNTD_ROBOS_ESQ (2)
+#define QNTD_ROBOS_ESQ (6)
 #define QNTD_ROBOS_DRT (2)
 #define QNTD_ROBOS_TOTAL (QNTD_ROBOS_ESQ+QNTD_ROBOS_DRT)
 #define QNTD_BOLAS (1)
@@ -36,7 +36,7 @@
 #define DMNS_PAREDE_LATERAL ((b3Vec3){COMPRIMENTO_ARENA, ALTURA_PAREDE, LARGURA_PAREDE})
 #define DMNS_PAREDE_FUNDO ((b3Vec3){LARGURA_PAREDE, ALTURA_PAREDE, LARGURA_ARENA})
 
-#define ORIGEM ((b3Pos){-COMPRIMENTO_ARENA/2, -LARGURA_PAREDE/2, -LARGURA_ARENA/2})
+#define ORIGEM ((b3Pos){0,0,0})
 #define POSICAO_CHAO (ORIGEM)
 #define POSICAO_PAREDE_CIMA ((b3Pos){              \
     ORIGEM.x,                                      \
@@ -59,11 +59,39 @@
     ORIGEM.z                                       \
 })
 
-////////////////// ESPECIFICAÇÕES POSICIONAMENTO INICIAL DOS ROBÔS
-#define POSICAO_INICIAL_ROBO ((b3Pos){ \
-    ORIGEM.x, \
-    ORIGEM.y+DMNS_ROBO, \
-    ORIGEM.z \
+////////////////// ESPECIFICAÇÕES POSICIONAMENTO DOS ROBÔS
+//Ao usar, basta inverter os sinais de x e/ou y para obter os demais pontos, já que o campo é simétrico em ambos os eixos!
+//BL: Bola livre
+//TL: Tiro livre
+//CP: Cobrança de pênalti
+//Existem 8 posições que o robô admite em qualquer uma dessas situações. 4 externas, 4 internas.
+#define POSICAO_BOLA_INICIO ((b3Pos){ \
+    ORIGEM.x,                     \
+    ORIGEM.y + RAIO_BOLA/2,       \
+    ORIGEM.z                      \
+})
+#define POSICAO_BOLA_BL ((b3Pos){ \
+    ORIGEM.x - 37.5f*CENTIMETROS, \
+    ORIGEM.y + RAIO_BOLA/2,       \
+    ORIGEM.z - 40.0f*CENTIMETROS  \
+})
+#define POSICAO_BOLA_TL ((b3Pos){ \
+    ORIGEM.x - 37.5f*CENTIMETROS, \
+    ORIGEM.y + RAIO_BOLA/2,       \
+    ORIGEM.z                      \
+})
+#define POSICAO_BOLA_CP (POSICAO_BOLA_TL)
+
+#define POSICAO_ROBO_INTERNO ((b3Pos){                \
+    ORIGEM.x - 37.5f*CENTIMETROS + 20.0f*CENTIMETROS, \
+    ORIGEM.y + DMNS_ROBO/2,                           \
+    ORIGEM.z - 25.0f*CENTIMETROS                      \
+})
+
+#define POSICAO_ROBO_EXTERNO ((b3Pos){                \
+    ORIGEM.x - 37.5f*CENTIMETROS - 20.0f*CENTIMETROS, \
+    ORIGEM.y + DMNS_ROBO/2,                           \
+    ORIGEM.z - 25.0f*CENTIMETROS                      \
 })
 
 ////////////////// INTERFACE GRÁFICA
