@@ -1,6 +1,7 @@
 #include <config.h>
 
-#include <stdio.h>
+//#include <stdio.h>
+#include <inttypes.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -29,73 +30,106 @@ Camera3D camera;
 b3DebugDraw debugDraw;
 
 void desenha(void *userShape, b3WorldTransform transform, b3HexColor color, void *context){
+    //printf("desenha\n");
     UserShape* minhaShapePtr = (UserShape*)userShape;
-    UserShape  minhaShape = *minhaShapePtr;
-
     Vector3 position = (Vector3){transform.p.x,transform.p.y,transform.p.z};
-    if(strcmp(minhaShape.tipo,"caixa") == 0){
+
+    // printf("desenha minhaShapePtr->tipo: %s\n", minhaShapePtr->tipo);
+
+    printf("desenha esfera\n");
+    //pegar matriz de rotação da caixa com magia negra
+    Matrix mat = QuaternionToMatrix((Quaternion){
+        transform.q.v.x,
+        transform.q.v.y,
+        transform.q.v.z,
+        transform.q.s
+    });
+
+    //coloca posição dentro da matriz de rotação
+    mat.m12 = position.x;
+    mat.m13 = position.y;
+    mat.m14 = position.z;
+
+    //mais magia negra, empurramos a matriz de posição+rotação na pilha do renderizador
+    rlPushMatrix();
+    rlMultMatrixf(MatrixToFloat(mat));
+
+    if(strcmp(minhaShapePtr->tipo,"placa") == 0){
+        printf("desenha placa\n");
         //tamanho da caixa
-        Vector3 extents = {minhaShape.extents.x*2,minhaShape.extents.y*2,minhaShape.extents.z*2};
-
-        //pegar matriz de rotação da caixa com magia negra
-        Matrix mat = QuaternionToMatrix((Quaternion){
-            transform.q.v.x,
-            transform.q.v.y,
-            transform.q.v.z,
-            transform.q.s
-        });
-
-        //coloca posição dentro da matriz de rotação
-        mat.m12 = position.x;
-        mat.m13 = position.y;
-        mat.m14 = position.z;
-
-        //mais magia negra, empurramos a matriz de posição+rotação na pilha do renderizador
-        rlPushMatrix();
-        rlMultMatrixf(MatrixToFloat(mat));
-        DrawCubeV((Vector3){0,0,0},extents,BLACK);
-        rlPopMatrix();
-    }else if(strcmp(minhaShape.tipo,"esfera") == 0){
-        //pegar matriz de rotação da caixa com magia negra
-        Matrix mat = QuaternionToMatrix((Quaternion){
-            transform.q.v.x,
-            transform.q.v.y,
-            transform.q.v.z,
-            transform.q.s
-        });
-
-        //coloca posição dentro da matriz de rotação
-        mat.m12 = position.x;
-        mat.m13 = position.y;
-        mat.m14 = position.z;
-
-        //mais magia negra, empurramos a matriz de posição+rotação na pilha do renderizador
-        rlPushMatrix();
-        rlMultMatrixf(MatrixToFloat(mat));
-        DrawSphere((Vector3){0,0,0},minhaShape.radius,BLACK);
-        rlPopMatrix();
+        Vector3 extents = {minhaShapePtr->extents.x*2,minhaShapePtr->extents.y*2,minhaShapePtr->extents.z*2};
+        DrawCubeV((Vector3){0,0,0},extents,GRAY);
     }
+    else if(strcmp(minhaShapePtr->tipo,"bola") == 0){
+        printf("desenha bola\n");
+        DrawSphere((Vector3){0,0,0},minhaShapePtr->radius,ORANGE);
+    }
+    else if(strcmp(minhaShapePtr->tipo,"roda") == 0){
+        printf("desenha roda\n");
+        Vector3 extents = {minhaShapePtr->extents.x*2,minhaShapePtr->extents.y*2,minhaShapePtr->extents.z*2};
+
+        DrawCubeV((Vector3){0,0,0},extents,GREEN);
+    }
+    else if(strcmp(minhaShapePtr->tipo,"robo") == 0){
+        printf("desenha robo\n");
+        Vector3 extents = {minhaShapePtr->extents.x*2,minhaShapePtr->extents.y*2,minhaShapePtr->extents.z*2};
+
+        DrawCubeV((Vector3){0,0,0},extents,BLUE);
+    }
+
+    //tira a matriz do topo da pilha
+    rlPopMatrix();
 }
 
 void *criaDebugShape(const b3DebugShape *debugShape, void *context){
+    printf("criaDebugShape\n");
     UserShape *minhaShapePtr = malloc(sizeof(UserShape));
-    UserShape minhaShape= *minhaShapePtr;
+    void* userData = b3Shape_GetUserData(debugShape->shapeId);
+    Tipo* tipoPtr = (Tipo*)userData;
 
-    if(debugShape->type == b3_hullShape){ //se for uma caixa
-        minhaShape.tipo="caixa";
+    if(tipoPtr->tipo==1){
+        printf("criaDebugShape: placa\n");
+        Arena* arenaPtr = (Arena*)userData;
+        
+        minhaShapePtr->tipo="placa";
         b3AABB aabb = debugShape->hull->aabb;
-        minhaShape.extents.x = (aabb.lowerBound.x-aabb.upperBound.x)*0.5f;
-        minhaShape.extents.y = (aabb.lowerBound.y-aabb.upperBound.y)*0.5f;
-        minhaShape.extents.z = (aabb.lowerBound.z-aabb.upperBound.z)*0.5f;
-    }else if (debugShape->type == b3_sphereShape){ //se for uma esfera
-        minhaShape.tipo="esfera";
-        minhaShape.radius = debugShape->sphere->radius;
+        minhaShapePtr->extents.x = (aabb.lowerBound.x-aabb.upperBound.x)*0.5f;
+        minhaShapePtr->extents.y = (aabb.lowerBound.y-aabb.upperBound.y)*0.5f;
+        minhaShapePtr->extents.z = (aabb.lowerBound.z-aabb.upperBound.z)*0.5f;
+    }
+    if(tipoPtr->tipo==2){
+        printf("criaDebugShape: bola\n");
+        Bola* bolaPtr = (Bola*)userData;
+        
+        minhaShapePtr->tipo="bola";
+        minhaShapePtr->radius = debugShape->sphere->radius;
+    }
+    if(tipoPtr->tipo==3){
+        printf("criaDebugShape: roda\n");
+        Roda* rodaPtr = (Roda*)userData;
+        
+        minhaShapePtr->tipo="roda";
+        b3AABB aabb = debugShape->hull->aabb;
+        minhaShapePtr->extents.x = (aabb.lowerBound.x-aabb.upperBound.x)*0.5f;
+        minhaShapePtr->extents.y = (aabb.lowerBound.y-aabb.upperBound.y)*0.5f;
+        minhaShapePtr->extents.z = (aabb.lowerBound.z-aabb.upperBound.z)*0.5f;
+    }
+    if(tipoPtr->tipo==4){
+        printf("criaDebugShape: robo\n");
+        Robo* roboPtr = (Robo*)userData;
+
+        minhaShapePtr->tipo="robo";
+        b3AABB aabb = debugShape->hull->aabb;
+        minhaShapePtr->extents.x = (aabb.lowerBound.x-aabb.upperBound.x)*0.5f;
+        minhaShapePtr->extents.y = (aabb.lowerBound.y-aabb.upperBound.y)*0.5f;
+        minhaShapePtr->extents.z = (aabb.lowerBound.z-aabb.upperBound.z)*0.5f;
     }
 
     return (void *) minhaShapePtr;
 }
 
 void destroiDebugShape(void *userShape, void *context){
+    //printf("destroiDebugShape\n");
     free(userShape);
 }
 
@@ -112,29 +146,32 @@ int main(){
     debugDraw.drawShapes = true; //é pra desenhar?
     debugDraw.drawingBounds = (b3AABB){ //isso aqui é um volume, desenhamos só o que está dentro do volume
         (b3Vec3){-100.0f,-100.0f,-100.0f},
-        (b3Vec3){-100.0f,-100.0f,-100.0f}
+        (b3Vec3){100.0f,100.0f,100.0f}
     };
 
     //cria cameras
     camera = (Camera3D){0};
-    camera.position = (Vector3){0.0f,10.0f,0.0f};
+    camera.position = (Vector3){0.0f,5.0f,5.0f};
     camera.target = (Vector3){0.0f,0.0f,0.0f};
-    camera.fovy = 45;
-    camera.projection = CAMERA_ORTHOGRAPHIC; //VISÃO ORTOGRÁFICA/'2D'
+    camera.up = (Vector3){0.0f,1.0f,0.0f};
+    camera.fovy = 20;
+    camera.projection = CAMERA_PERSPECTIVE;
 
     //cria mundo
     Mundo *mundoPtr = criaMundo(criaDebugShape, destroiDebugShape);
-    Mundo mundo = *mundoPtr;
 
     //loop
+    printf("Loop principal\n");
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
-        b3World_Step(mundo.worldId, dt, 4);
+        b3World_Step(mundoPtr->worldId, dt, 4);
 
         BeginDrawing();
-        BeginMode3D(camera);
-        b3World_Draw(mundo.worldId, &debugDraw, UINT64_MAX);
-        EndMode3D();
+            ClearBackground(BLACK);
+            BeginMode3D(camera);
+                DrawGrid(10, 1.0f);
+                b3World_Draw(mundoPtr->worldId, &debugDraw, UINT64_MAX);
+            EndMode3D();
         EndDrawing();
     }
 
