@@ -2,6 +2,7 @@
 #include "box3d/id.h"
 #include "box3d/math_functions.h"
 #include "box3d/types.h"
+#include "raylib.h"
 #include "raymath.h"
 #include <config.h>
 
@@ -57,12 +58,8 @@ Roda *criaRoda(Mundo *mundoPtr, Robo *roboPtr, int esq){
     Roda *rodaPtr = malloc(sizeof(Roda));
 
     //b3Pos posRobo = b3Body_GetPosition(roboPtr->bodyId);
-    esq=1-esq*2;
-    b3Pos offRoda = (b3Pos){
-        (DMNS_ROBO/2 + PROFUNDIDADE_RODA)*esq,
-        -DMNS_ROBO/2 + RAIO_RODA - ALTURA_RODA,
-        0.0f
-    };
+    b3Pos offRoda;
+    if(esq)offRoda=DESLOCAMENTO_RODA_ESQ;else offRoda=DESLOCAMENTO_RODA_DRT;
     b3Pos posRoda = b3Body_GetWorldPoint(roboPtr->bodyId,offRoda);
 
     b3BodyDef bodyDef = b3DefaultBodyDef();
@@ -73,6 +70,8 @@ Roda *criaRoda(Mundo *mundoPtr, Robo *roboPtr, int esq){
     b3HullData *cylHull = b3CreateCylinder(LARGURA_RODA, RAIO_RODA, LARGURA_RODA/2, 20);
     b3ShapeDef shapeDef = b3DefaultShapeDef();
     shapeDef.userData = (void*)rodaPtr;
+    shapeDef.baseMaterial.friction=0.5;
+    shapeDef.density = MASSA_RODA/cylHull->volume;
     b3CreateHullShape(bodyId, &shapeDef, cylHull);
 
     //printf("criaRoda mundoPtr->worldId: %d\n",mundoPtr->worldId.index1);
@@ -82,9 +81,19 @@ Roda *criaRoda(Mundo *mundoPtr, Robo *roboPtr, int esq){
     jointDef.base.collideConnected = false;
     jointDef.base.bodyIdA = roboPtr->bodyId;
     jointDef.base.bodyIdB = bodyId;
-    jointDef.base.localFrameA = b3Transform_identity;
-    jointDef.base.localFrameB = b3Transform_identity;
+    jointDef.base.localFrameA = 
+        (b3Transform){(b3Vec3)offRoda,b3Quat_identity};//b3MakeQuatFromAxisAngle((b3Vec3){1,0,0}, 1.57)};
+    jointDef.base.localFrameB = 
+        (b3Transform){(b3Vec3){0,0,0},b3MakeQuatFromAxisAngle((b3Vec3){1,0,0}, 1.57)};
+    jointDef.enableSuspensionLimit = true;
+    jointDef.lowerSuspensionLimit = 0;
+    jointDef.upperSuspensionLimit = 0;
+    jointDef.enableSteeringLimit = true;
+    jointDef.lowerSteeringLimit = 0;
+    jointDef.upperSteeringLimit = 0;
+    jointDef.maxSpinTorque = TORQUE_RODA;
     b3JointId jointId = b3CreateWheelJoint(mundoPtr->worldId, &jointDef);
+    b3WheelJoint_EnableSpinMotor(jointId, true);
 
     rodaPtr->tipo.tipo = 3;
     rodaPtr->bodyId = bodyId;
@@ -97,6 +106,30 @@ Roda *criaRoda(Mundo *mundoPtr, Robo *roboPtr, int esq){
     return rodaPtr;
 }
 
+void moveRobo(Robo *roboPtr, b3Pos posicao, b3Quat rotacao){
+    b3Body_SetTransform(
+        roboPtr->bodyId, 
+        posicao, 
+        rotacao
+    );
+
+    b3Body_SetTransform(
+        roboPtr->roda_esq->bodyId, 
+        b3Body_GetWorldPoint(
+            roboPtr->bodyId, 
+            DESLOCAMENTO_RODA_ESQ), 
+        b3Quat_identity
+    );
+
+    b3Body_SetTransform(
+        roboPtr->roda_drt->bodyId, 
+        b3Body_GetWorldPoint(
+            roboPtr->bodyId, 
+            DESLOCAMENTO_RODA_DRT), 
+        b3Quat_identity
+    );
+}
+
 Robo *criaRobo(Mundo *mundoPtr){
     printf("criaRobo\n");
     
@@ -104,11 +137,13 @@ Robo *criaRobo(Mundo *mundoPtr){
 
     b3BodyDef bodyDef = b3DefaultBodyDef();
     bodyDef.type = b3_dynamicBody;
-    bodyDef.position = ORIGEM;
+    bodyDef.position = (b3Pos){ORIGEM.x, ORIGEM.y, ORIGEM.z};
+    //bodyDef.rotation = b3MakeQuatFromAxisAngle((b3Vec3){0,1.0f,0}, 1.57);
     b3BodyId bodyId = b3CreateBody(mundoPtr->worldId,&bodyDef);
 
     b3BoxHull boxHull = b3MakeBoxHull(DMNS_ROBO/2, DMNS_ROBO/2, DMNS_ROBO/2);
     b3ShapeDef shapeDef = b3DefaultShapeDef();
+    shapeDef.density = MASSA_ROBO / boxHull.base.volume;
     shapeDef.userData = (void*)roboPtr;
     b3CreateHullShape(bodyId, &shapeDef, &boxHull.base);
 
@@ -183,16 +218,24 @@ Mundo *criaMundo(
         mundoPtr->robos[roboId]=roboPtr;
 
         int esq = 1-2*roboPtr->time;
+        int numerador, denominador;
         float amount;
-        if(roboPtr->time==0) amount = (float)(roboId)/(QNTD_ROBOS_ESQ-1);
-        else                amount = (float)(roboId-QNTD_ROBOS_ESQ)/(QNTD_ROBOS_DRT-1);
+        if(roboPtr->time==0){
+            numerador = roboId+1;
+            denominador = QNTD_ROBOS_ESQ+1;
+        }else{
+            numerador = roboId - QNTD_ROBOS_ESQ+1;
+            denominador = QNTD_ROBOS_DRT+1;
+        }
+        amount = (float) numerador/denominador;
+
         b3Pos posRobo = (b3Pos){
             POSICAO_BOLA_BL.x*esq,
             POSICAO_ROBO_EXTERNO.y,
             Lerp(POSICAO_BOLA_BL.z, -POSICAO_BOLA_BL.z, amount),
         };
-        printf("criaMundo posRobo: (x=%f, y=%f, z=%f)",posRobo.x,posRobo.y,posRobo.z);
-        b3Body_SetTransform(roboPtr->bodyId, posRobo, b3Quat_identity);
+        b3Quat rotRobo = b3Quat_identity;
+        moveRobo(roboPtr, posRobo, rotRobo);
     }
 
     //Fazer bolas

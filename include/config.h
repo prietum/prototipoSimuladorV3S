@@ -1,22 +1,43 @@
 ////////////////// INICIALIZAÇÃO DA PARTIDA
-#define QNTD_ROBOS_ESQ (6)
-#define QNTD_ROBOS_DRT (2)
+#define QNTD_ROBOS_ESQ (1)
+#define QNTD_ROBOS_DRT (1)
 #define QNTD_ROBOS_TOTAL (QNTD_ROBOS_ESQ+QNTD_ROBOS_DRT)
 #define QNTD_BOLAS (1)
 
 ////////////////// MEDIDAS SI
 #define MILIMETROS (1.0f/1000)
 #define CENTIMETROS (1.0f/100)
+#define QUILOGRAMAS (1.0f)
 #define GRAMAS (1.0f/1000)
+#define KGCM (QUILOGRAMAS*CENTIMETROS) //torque
+#define RPM (6.28f/60.0f) //converte para radianos/segundo ao multiplicar
 
 ////////////////// ESPECIFICAÇÕES DO ROBÔ
-#define TORQUE (1.0f)
-#define MASS_ROBO (500.0f * GRAMAS)
+#define MASSA_ROBO (500.0f * GRAMAS)
 #define DMNS_ROBO (75.0f * MILIMETROS)
-#define RAIO_RODA (10.0f * MILIMETROS)
-#define ALTURA_RODA (3.0f * MILIMETROS) //espaço entre o contato da roda com o chão e o fundo da carcaça do robô
+#define ALTURA_ASSOALHO (5.0f * MILIMETROS) //espaço entre o contato da roda com o chão e o fundo da carcaça do robô
+
+////////////////// ESPECIFICAÇÕES DA RODA DO ROBÔ
+#define MASSA_RODA (100.0f * GRAMAS)
+#define RAIO_RODA (15.0f * MILIMETROS)
 #define LARGURA_RODA (10.0f * MILIMETROS)
 #define PROFUNDIDADE_RODA ((LARGURA_RODA/2)) //quantos milimetros para dentro fica a roda?
+#define DESLOCAMENTO_RODA_ESQ (                    \
+    (b3Pos){                                       \
+        0,                                         \
+        -DMNS_ROBO/2 + RAIO_RODA - ALTURA_ASSOALHO,\
+        (DMNS_ROBO/2 + PROFUNDIDADE_RODA)* 1       \
+    }                                              \
+)
+#define DESLOCAMENTO_RODA_DRT (                    \
+    (b3Pos){                                       \
+        0,                                         \
+        -DMNS_ROBO/2 + RAIO_RODA - ALTURA_ASSOALHO,\
+        (DMNS_ROBO/2 + PROFUNDIDADE_RODA)*-1       \
+    }                                              \
+)
+#define TORQUE_RODA (10.0f*KGCM)
+#define RPM_RODA (500.0f*RPM)
 
 ////////////////// ESPECIFICAÇÕES DA BOLA
 #define RAIO_BOLA (32.7f * MILIMETROS)
@@ -36,7 +57,7 @@
 #define DMNS_PAREDE_LATERAL ((b3Vec3){COMPRIMENTO_ARENA, ALTURA_PAREDE, LARGURA_PAREDE})
 #define DMNS_PAREDE_FUNDO ((b3Vec3){LARGURA_PAREDE, ALTURA_PAREDE, LARGURA_ARENA})
 
-#define ORIGEM ((b3Pos){0,0,0})
+#define ORIGEM ((b3Pos){0.0f,0.0f,0.0f})
 #define POSICAO_CHAO (ORIGEM)
 #define POSICAO_PAREDE_CIMA ((b3Pos){              \
     ORIGEM.x,                                      \
@@ -84,17 +105,18 @@
 
 #define POSICAO_ROBO_INTERNO ((b3Pos){                \
     ORIGEM.x - 37.5f*CENTIMETROS + 20.0f*CENTIMETROS, \
-    ORIGEM.y + DMNS_ROBO/2,                           \
+    ORIGEM.y + DMNS_ROBO/2 + ALTURA_ASSOALHO,         \
     ORIGEM.z - 25.0f*CENTIMETROS                      \
 })
 
 #define POSICAO_ROBO_EXTERNO ((b3Pos){                \
     ORIGEM.x - 37.5f*CENTIMETROS - 20.0f*CENTIMETROS, \
-    ORIGEM.y + DMNS_ROBO/2,                           \
+    ORIGEM.y + DMNS_ROBO/2 + ALTURA_ASSOALHO,         \
     ORIGEM.z - 25.0f*CENTIMETROS                      \
 })
 
 ////////////////// INTERFACE GRÁFICA
+#define POSICAO_CAMERA ((Vector3){2.0f,2.0f,2.0f})
 #define COMPRIMENTO_JANELA (600)
 #define ALTURA_JANELA (600)
 
