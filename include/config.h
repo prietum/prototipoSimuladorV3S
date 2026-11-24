@@ -1,6 +1,6 @@
 ////////////////// INICIALIZAÇÃO DA PARTIDA
-#define QNTD_ROBOS_ESQ (1)
-#define QNTD_ROBOS_DRT (1)
+#define QNTD_ROBOS_ESQ (3)
+#define QNTD_ROBOS_DRT (3)
 #define QNTD_ROBOS_TOTAL (QNTD_ROBOS_ESQ+QNTD_ROBOS_DRT)
 #define QNTD_BOLAS (1)
 
@@ -26,17 +26,29 @@
     (b3Pos){                                       \
         0,                                         \
         -DMNS_ROBO/2 + RAIO_RODA - ALTURA_ASSOALHO,\
-        (DMNS_ROBO/2 + PROFUNDIDADE_RODA)* 1       \
+        (DMNS_ROBO/2 - PROFUNDIDADE_RODA)* 1       \
     }                                              \
+)
+#define ORIENTACAO_JUNTA_ESQ (                    \
+    b3MulQuat(                                         \
+        b3MakeQuatFromAxisAngle((b3Vec3){1,0,0}, 1.57),\
+        b3MakeQuatFromAxisAngle((b3Vec3){0,1,0}, 3.14) \
+    )                                                  \
 )
 #define DESLOCAMENTO_RODA_DRT (                    \
     (b3Pos){                                       \
         0,                                         \
         -DMNS_ROBO/2 + RAIO_RODA - ALTURA_ASSOALHO,\
-        (DMNS_ROBO/2 + PROFUNDIDADE_RODA)*-1       \
+        (DMNS_ROBO/2 - PROFUNDIDADE_RODA)*-1       \
     }                                              \
 )
-#define TORQUE_RODA (10.0f*KGCM)
+#define ORIENTACAO_JUNTA_DRT (                    \
+    b3MulQuat(                                         \
+        b3MakeQuatFromAxisAngle((b3Vec3){1,0,0}, 1.57),\
+        b3MakeQuatFromAxisAngle((b3Vec3){0,1,0}, 0.00) \
+    )                                                  \
+)
+#define TORQUE_RODA (0.86f*KGCM)
 #define RPM_RODA (500.0f*RPM)
 
 ////////////////// ESPECIFICAÇÕES DA BOLA
@@ -116,7 +128,7 @@
 })
 
 ////////////////// INTERFACE GRÁFICA
-#define POSICAO_CAMERA ((Vector3){2.0f,2.0f,2.0f})
+#define POSICAO_CAMERA ((Vector3){0.0f,5.0f,0.1f})
 #define COMPRIMENTO_JANELA (600)
 #define ALTURA_JANELA (600)
 

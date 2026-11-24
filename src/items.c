@@ -1,9 +1,5 @@
-#include "box3d/collision.h"
 #include "box3d/id.h"
 #include "box3d/math_functions.h"
-#include "box3d/types.h"
-#include "raylib.h"
-#include "raymath.h"
 #include <config.h>
 
 #include <stdio.h>
@@ -11,6 +7,10 @@
 
 #include <box3d/box3d.h>
 #include <items.h>
+
+float lerp(float a, float b, float t){
+    return a+(b-a)*t;
+}
 
 b3BodyId criaParede(Mundo *mundoPtr, Arena *arenaPtr, b3Pos pos, b3Vec3 size){
     printf("criaParede\n");
@@ -59,7 +59,15 @@ Roda *criaRoda(Mundo *mundoPtr, Robo *roboPtr, int esq){
 
     //b3Pos posRobo = b3Body_GetPosition(roboPtr->bodyId);
     b3Pos offRoda;
-    if(esq)offRoda=DESLOCAMENTO_RODA_ESQ;else offRoda=DESLOCAMENTO_RODA_DRT;
+    b3Quat oriJunta;
+    if(esq){
+        offRoda=DESLOCAMENTO_RODA_ESQ;
+        oriJunta=ORIENTACAO_JUNTA_ESQ;
+    }
+    else {
+        offRoda=DESLOCAMENTO_RODA_DRT;
+        oriJunta=ORIENTACAO_JUNTA_DRT;
+    }
     b3Pos posRoda = b3Body_GetWorldPoint(roboPtr->bodyId,offRoda);
 
     b3BodyDef bodyDef = b3DefaultBodyDef();
@@ -82,9 +90,9 @@ Roda *criaRoda(Mundo *mundoPtr, Robo *roboPtr, int esq){
     jointDef.base.bodyIdA = roboPtr->bodyId;
     jointDef.base.bodyIdB = bodyId;
     jointDef.base.localFrameA = 
-        (b3Transform){(b3Vec3)offRoda,b3Quat_identity};//b3MakeQuatFromAxisAngle((b3Vec3){1,0,0}, 1.57)};
+        (b3Transform){(b3Vec3)offRoda,b3Quat_identity};
     jointDef.base.localFrameB = 
-        (b3Transform){(b3Vec3){0,0,0},b3MakeQuatFromAxisAngle((b3Vec3){1,0,0}, 1.57)};
+        (b3Transform){(b3Vec3){0,0,0},oriJunta};
     jointDef.enableSuspensionLimit = true;
     jointDef.lowerSuspensionLimit = 0;
     jointDef.upperSuspensionLimit = 0;
@@ -232,9 +240,9 @@ Mundo *criaMundo(
         b3Pos posRobo = (b3Pos){
             POSICAO_BOLA_BL.x*esq,
             POSICAO_ROBO_EXTERNO.y,
-            Lerp(POSICAO_BOLA_BL.z, -POSICAO_BOLA_BL.z, amount),
+            lerp(POSICAO_BOLA_BL.z, -POSICAO_BOLA_BL.z, amount),
         };
-        b3Quat rotRobo = b3Quat_identity;
+        b3Quat rotRobo = b3MakeQuatFromAxisAngle((b3Vec3){0,1,0}, 3.14*(1-roboPtr->time));
         moveRobo(roboPtr, posRobo, rotRobo);
     }
 
