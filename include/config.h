@@ -56,6 +56,7 @@
 #define MASSA_BOLA (200.0f * GRAMAS)
 
 ////////////////// ESPECIFICAÇÕES DA ARENA
+//medidas
 #define LARGURA_PAREDE (2.5f * CENTIMETROS)
 #define ALTURA_PAREDE (8.0f * CENTIMETROS)
 
@@ -64,32 +65,95 @@
 
 #define PROFUNDIDADE_GOL (8.0f * CENTIMETROS)
 #define LARGURA_GOL (50.0f * CENTIMETROS)
+#define LARGURA_FUNDO ((LARGURA_ARENA - LARGURA_GOL)/2)
 
-#define DMNS_CHAO ((b3Vec3){COMPRIMENTO_ARENA, LARGURA_PAREDE, LARGURA_ARENA})
+//dimensões (volume)
+#define DMNS_CHAO ((b3Vec3){COMPRIMENTO_ARENA+LARGURA_PAREDE*4+PROFUNDIDADE_GOL*2, LARGURA_PAREDE, LARGURA_ARENA})
 #define DMNS_PAREDE_LATERAL ((b3Vec3){COMPRIMENTO_ARENA, ALTURA_PAREDE, LARGURA_PAREDE})
-#define DMNS_PAREDE_FUNDO ((b3Vec3){LARGURA_PAREDE, ALTURA_PAREDE, LARGURA_ARENA})
+#define DMNS_PAREDE_FUNDO ((b3Vec3){LARGURA_PAREDE, ALTURA_PAREDE, LARGURA_FUNDO})
+#define DMNS_PAREDE_TRAVE ((b3Vec3){PROFUNDIDADE_GOL, ALTURA_PAREDE, LARGURA_PAREDE})
+#define DMNS_PAREDE_GOL ((b3Vec3){LARGURA_PAREDE, ALTURA_PAREDE, LARGURA_GOL+LARGURA_PAREDE*4})
 
+//eixos, basta mudar o sinal para trocar norte/sul, direita/esquerda
+#define X_LATERAL (0)
+#define X_FUNDO (COMPRIMENTO_ARENA/2+LARGURA_PAREDE/2)
+#define X_TRAVE (COMPRIMENTO_ARENA/2+PROFUNDIDADE_GOL/2+LARGURA_PAREDE)
+#define X_GOL (COMPRIMENTO_ARENA/2+PROFUNDIDADE_GOL+LARGURA_PAREDE*1.5)
+
+#define Y_CHAO (0)
+#define Y_PAREDE (ALTURA_PAREDE/2)
+
+#define Z_LATERAL (LARGURA_ARENA/2 + LARGURA_PAREDE/2)
+#define Z_FUNDO (LARGURA_ARENA/2 - LARGURA_FUNDO/2 + LARGURA_PAREDE)
+#define Z_TRAVE (LARGURA_ARENA/2 - LARGURA_FUNDO + LARGURA_PAREDE*1.5)
+#define Z_GOL (0)
+
+//posições, usamos os eixos pois a arena é simétrica
 #define ORIGEM ((b3Pos){0.0f,0.0f,0.0f})
-#define POSICAO_CHAO (ORIGEM)
-#define POSICAO_PAREDE_CIMA ((b3Pos){              \
-    ORIGEM.x,                                      \
-    ORIGEM.y+ALTURA_PAREDE/2+LARGURA_PAREDE/2,     \
-    ORIGEM.z-LARGURA_ARENA/2-LARGURA_PAREDE/2      \
+#define POSICAO_CHAO ((b3Pos){\
+    ORIGEM.x+0,     \
+    ORIGEM.y+Y_CHAO,\
+    ORIGEM.z+0      \
 })
-#define POSICAO_PAREDE_BAIXO ((b3Pos){             \
-    ORIGEM.x,                                      \
-    ORIGEM.y+ALTURA_PAREDE/2+LARGURA_PAREDE/2,     \
-    ORIGEM.z+LARGURA_ARENA/2+LARGURA_PAREDE/2      \
+#define POSICAO_PAREDE_LATERAL_NORTE ((b3Pos){\
+    ORIGEM.x+X_LATERAL,\
+    ORIGEM.y+Y_PAREDE, \
+    ORIGEM.z-Z_LATERAL \
 })
-#define POSICAO_PAREDE_ESQUERDA ((b3Pos){          \
-    ORIGEM.x-COMPRIMENTO_ARENA/2-LARGURA_PAREDE/2, \
-    ORIGEM.y+ALTURA_PAREDE/2+LARGURA_PAREDE/2,     \
-    ORIGEM.z                                       \
+#define POSICAO_PAREDE_LATERAL_SUL ((b3Pos){\
+    ORIGEM.x+X_LATERAL,\
+    ORIGEM.y+Y_PAREDE, \
+    ORIGEM.z+Z_LATERAL \
 })
-#define POSICAO_PAREDE_DIREITA ((b3Pos){           \
-    ORIGEM.x+COMPRIMENTO_ARENA/2+LARGURA_PAREDE/2, \
-    ORIGEM.y+ALTURA_PAREDE/2+LARGURA_PAREDE/2,     \
-    ORIGEM.z                                       \
+#define POSICAO_PAREDE_FUNDO_ESQ_NORTE ((b3Pos){\
+    ORIGEM.x-X_FUNDO, \
+    ORIGEM.y+Y_PAREDE,\
+    ORIGEM.z-Z_FUNDO  \
+})
+#define POSICAO_PAREDE_FUNDO_ESQ_SUL ((b3Pos){\
+    ORIGEM.x-X_FUNDO, \
+    ORIGEM.y+Y_PAREDE,\
+    ORIGEM.z+Z_FUNDO  \
+})
+#define POSICAO_PAREDE_FUNDO_DRT_NORTE ((b3Pos){\
+    ORIGEM.x+X_FUNDO, \
+    ORIGEM.y+Y_PAREDE,\
+    ORIGEM.z-Z_FUNDO  \
+})
+#define POSICAO_PAREDE_FUNDO_DRT_SUL ((b3Pos){\
+    ORIGEM.x+X_FUNDO, \
+    ORIGEM.y+Y_PAREDE,\
+    ORIGEM.z+Z_FUNDO  \
+})
+#define POSICAO_PAREDE_TRAVE_ESQ_NORTE ((b3Pos){\
+    ORIGEM.x-X_TRAVE, \
+    ORIGEM.y+Y_PAREDE,\
+    ORIGEM.z-Z_TRAVE  \
+})
+#define POSICAO_PAREDE_TRAVE_ESQ_SUL ((b3Pos){\
+    ORIGEM.x-X_TRAVE, \
+    ORIGEM.y+Y_PAREDE,\
+    ORIGEM.z+Z_TRAVE  \
+})
+#define POSICAO_PAREDE_TRAVE_DRT_NORTE ((b3Pos){\
+    ORIGEM.x+X_TRAVE, \
+    ORIGEM.y+Y_PAREDE,\
+    ORIGEM.z-Z_TRAVE  \
+})
+#define POSICAO_PAREDE_TRAVE_DRT_SUL ((b3Pos){\
+    ORIGEM.x+X_TRAVE, \
+    ORIGEM.y+Y_PAREDE,\
+    ORIGEM.z+Z_TRAVE  \
+})
+#define POSICAO_PAREDE_GOL_ESQ ((b3Pos){\
+    ORIGEM.x-X_GOL,   \
+    ORIGEM.y+Y_PAREDE,\
+    ORIGEM.z+Z_GOL    \
+})
+#define POSICAO_PAREDE_GOL_DRT ((b3Pos){\
+    ORIGEM.x+X_GOL,   \
+    ORIGEM.y+Y_PAREDE,\
+    ORIGEM.z+Z_GOL    \
 })
 
 ////////////////// ESPECIFICAÇÕES POSICIONAMENTO DOS ROBÔS
@@ -128,7 +192,7 @@
 })
 
 ////////////////// INTERFACE GRÁFICA
-#define POSICAO_CAMERA ((Vector3){0.0f,5.0f,0.1f})
+#define POSICAO_CAMERA ((Vector3){0.0f,6.0f,0.1f})
 #define COMPRIMENTO_JANELA (600)
 #define ALTURA_JANELA (600)
 

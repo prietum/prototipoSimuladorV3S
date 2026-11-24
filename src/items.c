@@ -37,18 +37,38 @@ Arena *criaArena(Mundo *mundoPtr){
     Arena *arenaPtr = malloc(sizeof(Arena));
     Arena arena = *arenaPtr;
 
-    b3BodyId bodyId_chao           = criaParede(mundoPtr, arenaPtr, POSICAO_CHAO,       DMNS_CHAO);
-    b3BodyId bodyId_paredeCima     = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_CIMA, DMNS_PAREDE_LATERAL);
-    b3BodyId bodyId_paredeBaixo    = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_BAIXO, DMNS_PAREDE_LATERAL);
-    b3BodyId bodyId_paredeEsquerda = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_ESQUERDA, DMNS_PAREDE_FUNDO);
-    b3BodyId bodyId_paredeDireita  = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_DIREITA, DMNS_PAREDE_FUNDO);
+    b3BodyId bodyId_chao = criaParede(mundoPtr,arenaPtr,POSICAO_CHAO,DMNS_CHAO);
 
+    b3BodyId bodyId_parede_lateralN = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_LATERAL_NORTE, DMNS_PAREDE_LATERAL);
+    b3BodyId bodyId_parede_lateralS = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_LATERAL_SUL, DMNS_PAREDE_LATERAL);
+
+    b3BodyId bodyId_parede_fundoEsqN = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_FUNDO_ESQ_NORTE,DMNS_PAREDE_FUNDO);
+    b3BodyId bodyId_parede_fundoEsqS = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_FUNDO_ESQ_SUL,DMNS_PAREDE_FUNDO);
+    b3BodyId bodyId_parede_fundoDrtN = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_FUNDO_DRT_NORTE,DMNS_PAREDE_FUNDO);
+    b3BodyId bodyId_parede_fundoDrtS = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_FUNDO_DRT_SUL,DMNS_PAREDE_FUNDO);
+
+    b3BodyId bodyId_parede_traveEsqN = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_TRAVE_ESQ_NORTE,DMNS_PAREDE_TRAVE);
+    b3BodyId bodyId_parede_traveEsqS = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_TRAVE_ESQ_SUL,DMNS_PAREDE_TRAVE);
+    b3BodyId bodyId_parede_traveDrtN = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_TRAVE_DRT_NORTE,DMNS_PAREDE_TRAVE);
+    b3BodyId bodyId_parede_traveDrtS = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_TRAVE_DRT_SUL,DMNS_PAREDE_TRAVE);
+
+    b3BodyId bodyId_parede_golEsq = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_GOL_ESQ,DMNS_PAREDE_GOL);
+    b3BodyId bodyId_parede_golDrt = criaParede(mundoPtr, arenaPtr, POSICAO_PAREDE_GOL_DRT,DMNS_PAREDE_GOL);
+    
     arenaPtr->tipo.tipo = 1;
     arenaPtr->bodyId_chao = bodyId_chao;
-    arenaPtr->bodyId_paredeCima = bodyId_paredeCima;
-    arenaPtr->bodyId_paredeBaixo = bodyId_paredeBaixo;
-    arenaPtr->bodyId_paredeEsquerda = bodyId_paredeEsquerda;
-    arenaPtr->bodyId_paredeDireita = bodyId_paredeDireita;
+    arenaPtr->bodyId_parede_lateralN = bodyId_parede_lateralN;
+    arenaPtr->bodyId_parede_lateralS = bodyId_parede_lateralS;
+    arenaPtr->bodyId_parede_fundoEsqN = bodyId_parede_fundoEsqN;
+    arenaPtr->bodyId_parede_fundoEsqS = bodyId_parede_fundoEsqS;
+    arenaPtr->bodyId_parede_fundoDrtN = bodyId_parede_fundoDrtN;
+    arenaPtr->bodyId_parede_fundoDrtS = bodyId_parede_fundoDrtS;
+    arenaPtr->bodyId_parede_traveEsqN = bodyId_parede_traveEsqN;
+    arenaPtr->bodyId_parede_traveEsqS = bodyId_parede_traveEsqS;
+    arenaPtr->bodyId_parede_traveDrtN = bodyId_parede_traveDrtN;
+    arenaPtr->bodyId_parede_traveDrtS = bodyId_parede_traveDrtS;
+    arenaPtr->bodyId_parede_golEsq = bodyId_parede_golEsq;
+    arenaPtr->bodyId_parede_golDrt = bodyId_parede_golDrt;
 
     return arenaPtr;
 }

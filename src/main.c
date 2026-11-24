@@ -1,3 +1,4 @@
+#include "box3d/id.h"
 #include <config.h>
 
 //#include <stdio.h>
@@ -24,6 +25,7 @@ typedef struct {
     char* tipo;
     b3Vec3 extents; //tamanho de uma forma geométrica de caixa, se for o caso
     float radius; //raio de uma forma geométrica de esfera, se for o caso
+    Color cor;
 } UserShape;
 
 Camera3D camera;
@@ -56,23 +58,23 @@ void desenha(void *userShape, b3WorldTransform transform, b3HexColor color, void
         //printf("desenha placa\n");
         //tamanho da caixa
         Vector3 extents = {minhaShapePtr->extents.x*2,minhaShapePtr->extents.y*2,minhaShapePtr->extents.z*2};
-        DrawCubeV((Vector3){0,0,0},extents,GRAY);
+        DrawCubeV((Vector3){0,0,0},extents,minhaShapePtr->cor);
     }
     else if(strcmp(minhaShapePtr->tipo,"bola") == 0){
         //printf("desenha bola\n");
-        DrawSphere((Vector3){0,0,0},minhaShapePtr->radius,ORANGE);
+        DrawSphere((Vector3){0,0,0},minhaShapePtr->radius,minhaShapePtr->cor);
     }
     else if(strcmp(minhaShapePtr->tipo,"roda") == 0){
         //printf("desenha roda\n");
         Vector3 extents = {minhaShapePtr->extents.x,minhaShapePtr->extents.y*2,minhaShapePtr->extents.z};
 
-        DrawCylinder((Vector3){0,0,0},extents.x,extents.z,extents.y,20,GREEN);
+        DrawCylinder((Vector3){0,0,0},extents.x,extents.z,extents.y,20,minhaShapePtr->cor);
     }
     else if(strcmp(minhaShapePtr->tipo,"robo") == 0){
         //printf("desenha robo\n");
         Vector3 extents = {minhaShapePtr->extents.x*2,minhaShapePtr->extents.y*2,minhaShapePtr->extents.z*2};
 
-        DrawCubeV((Vector3){0,0,0},extents,BLUE);
+        DrawCubeV((Vector3){0,0,0},extents,minhaShapePtr->cor);
     }
 
     //tira a matriz do topo da pilha
@@ -94,6 +96,10 @@ void *criaDebugShape(const b3DebugShape *debugShape, void *context){
         minhaShapePtr->extents.x = (aabb.upperBound.x-aabb.lowerBound.x)*0.5f;
         minhaShapePtr->extents.y = (aabb.upperBound.y-aabb.lowerBound.y)*0.5f;
         minhaShapePtr->extents.z = (aabb.upperBound.z-aabb.lowerBound.z)*0.5f;
+        if(b3Shape_GetBody(debugShape->shapeId).index1==arenaPtr->bodyId_chao.index1)
+            minhaShapePtr->cor = GRAY;
+        else
+            minhaShapePtr->cor = WHITE;
     }
     if(tipoPtr->tipo==2){
         //printf("criaDebugShape: bola\n");
@@ -101,6 +107,7 @@ void *criaDebugShape(const b3DebugShape *debugShape, void *context){
         
         minhaShapePtr->tipo="bola";
         minhaShapePtr->radius = debugShape->sphere->radius;
+        minhaShapePtr->cor = ORANGE;
     }
     if(tipoPtr->tipo==3){
         printf("criaDebugShape: roda\n");
@@ -111,6 +118,7 @@ void *criaDebugShape(const b3DebugShape *debugShape, void *context){
         minhaShapePtr->extents.x = (aabb.upperBound.x-aabb.lowerBound.x)*0.5f;
         minhaShapePtr->extents.y = (aabb.upperBound.y-aabb.lowerBound.y)*0.5f;
         minhaShapePtr->extents.z = (aabb.upperBound.z-aabb.lowerBound.z)*0.5f;
+        minhaShapePtr->cor = BLACK;
         printf("criaDebugShape: roda extents: %f %f %f\n", minhaShapePtr->extents.x,
 minhaShapePtr->extents.y,
 minhaShapePtr->extents.z);
@@ -124,6 +132,7 @@ minhaShapePtr->extents.z);
         minhaShapePtr->extents.x = (aabb.upperBound.x-aabb.lowerBound.x)*0.5f;
         minhaShapePtr->extents.y = (aabb.upperBound.y-aabb.lowerBound.y)*0.5f;
         minhaShapePtr->extents.z = (aabb.upperBound.z-aabb.lowerBound.z)*0.5f;
+        minhaShapePtr->cor = BLUE;
     }
 
     return (void *) minhaShapePtr;
@@ -168,7 +177,7 @@ int main(){
 
         for(int roboId=0;roboId<QNTD_ROBOS_TOTAL;roboId++){
             b3WheelJoint_SetSpinMotorSpeed(mundoPtr->robos[roboId]->roda_drt->jointId, RPM_RODA);
-            b3WheelJoint_SetSpinMotorSpeed(mundoPtr->robos[roboId]->roda_esq->jointId, RPM_RODA/2);
+            b3WheelJoint_SetSpinMotorSpeed(mundoPtr->robos[roboId]->roda_esq->jointId, 0);
         }
 
         b3World_Step(mundoPtr->worldId, dt, 4);

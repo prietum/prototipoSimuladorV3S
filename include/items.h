@@ -34,6 +34,7 @@ typedef struct {
     //                              sul                              
 
     //Ṕlacas de madeira que formam o campo
+    b3BodyId bodyId;
     b3BodyId bodyId_chao;             //  0 Chão da arena
     b3BodyId bodyId_parede_lateralN;  //  1 Parede de linha lateral norte
     b3BodyId bodyId_parede_lateralS;  //  2 Parede de linha lateral sul
