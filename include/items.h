@@ -14,12 +14,39 @@ typedef struct {
 
 typedef struct {
     Tipo tipo;
+    
+    //                             norte                             
+    //                                                               
+    //            . - - .------------1-------------. - - .       
+    //                  |                          |            
+    //            |     3                          5     |      
+    //                  |                          |            
+    //            .--7--'                          '--9--.      
+    //            |                                      |      
+    //esquerda  11|                  0                   |12  direita  
+    //            |                                      |      
+    //            '--8--.                          .--10-'      
+    //                  |                          |            
+    //            |     4                          6     |      
+    //                  |                          |            
+    //            ' - - '------------2-------------' - - '      
+    //                                                               
+    //                              sul                              
 
-    b3BodyId bodyId_paredeCima; // parede de linha lateral norte
-    b3BodyId bodyId_paredeBaixo; // parede de linha lateral sul
-    b3BodyId bodyId_paredeEsquerda; // parede de linha de fundo do lado esquerdo
-    b3BodyId bodyId_paredeDireita; // parede de linha de fundo do lado direito
-    b3BodyId bodyId_chao;
+    //Ṕlacas de madeira que formam o campo
+    b3BodyId bodyId_chao;             //  0 Chão da arena
+    b3BodyId bodyId_parede_lateralN;  //  1 Parede de linha lateral norte
+    b3BodyId bodyId_parede_lateralS;  //  2 Parede de linha lateral sul
+    b3BodyId bodyId_parede_fundoEsqN; //  3 Parede de linha de fundo do lado esquerdo norte
+    b3BodyId bodyId_parede_fundoEsqS; //  4 Parede de linha de fundo do lado esquerdo sul
+    b3BodyId bodyId_parede_fundoDrtN; //  5 Parede de linha de fundo do lado direito norte
+    b3BodyId bodyId_parede_fundoDrtS; //  6 Parede de linha de fundo do lado direito sul
+    b3BodyId bodyId_parede_traveEsqN; //  7 Parede de trave do lado esquerdo norte
+    b3BodyId bodyId_parede_traveEsqS; //  8 Parede de trave do lado esquerdo sul
+    b3BodyId bodyId_parede_traveDrtN; //  9 Parede de trave do lado direito norte
+    b3BodyId bodyId_parede_traveDrtS; // 10 Parede de trave do lado direito sul
+    b3BodyId bodyId_parede_golEsq;    // 11 Parede de gol lado esquerdo
+    b3BodyId bodyId_parede_golDrt;    // 12 Parede de gol lado direito
 } Arena;
 
 typedef struct {
