@@ -177,7 +177,7 @@ int main(){
 
         for(int roboId=0;roboId<QNTD_ROBOS_TOTAL;roboId++){
             b3WheelJoint_SetSpinMotorSpeed(mundoPtr->robos[roboId]->roda_drt->jointId, RPM_RODA);
-            b3WheelJoint_SetSpinMotorSpeed(mundoPtr->robos[roboId]->roda_esq->jointId, 0);
+            b3WheelJoint_SetSpinMotorSpeed(mundoPtr->robos[roboId]->roda_esq->jointId, RPM_RODA/2);
         }
 
         b3World_Step(mundoPtr->worldId, dt, 4);

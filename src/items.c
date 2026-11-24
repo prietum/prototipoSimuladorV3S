@@ -25,6 +25,7 @@ b3BodyId criaParede(Mundo *mundoPtr, Arena *arenaPtr, b3Pos pos, b3Vec3 size){
     //printf("criaParede boxHull\n");
     b3BoxHull boxHull = b3MakeBoxHull(size.x/2,size.y/2,size.z/2);
     b3ShapeDef shapeDef = b3DefaultShapeDef();
+    shapeDef.baseMaterial.friction = 0.1;
     shapeDef.userData = (void*)arenaPtr;
     b3CreateHullShape(bodyId, &shapeDef, &boxHull.base);
 
@@ -172,6 +173,7 @@ Robo *criaRobo(Mundo *mundoPtr){
     b3BoxHull boxHull = b3MakeBoxHull(DMNS_ROBO/2, DMNS_ROBO/2, DMNS_ROBO/2);
     b3ShapeDef shapeDef = b3DefaultShapeDef();
     shapeDef.density = MASSA_ROBO / boxHull.base.volume;
+    shapeDef.baseMaterial.friction = 0.1;
     shapeDef.userData = (void*)roboPtr;
     b3CreateHullShape(bodyId, &shapeDef, &boxHull.base);
 

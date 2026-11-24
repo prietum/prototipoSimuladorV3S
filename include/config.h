@@ -19,7 +19,7 @@
 
 ////////////////// ESPECIFICAÇÕES DA RODA DO ROBÔ
 #define MASSA_RODA (100.0f * GRAMAS)
-#define RAIO_RODA (15.0f * MILIMETROS)
+#define RAIO_RODA (13.0f * MILIMETROS)
 #define LARGURA_RODA (10.0f * MILIMETROS)
 #define PROFUNDIDADE_RODA ((LARGURA_RODA/2)) //quantos milimetros para dentro fica a roda?
 #define DESLOCAMENTO_RODA_ESQ (                    \
