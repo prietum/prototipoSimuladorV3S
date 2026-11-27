@@ -164,7 +164,7 @@ int main(){
     camera.position = POSICAO_CAMERA;
     camera.target = (Vector3){0.0f,0.0f,0.0f};
     camera.up = (Vector3){0.0f,1.0f,0.0f};
-    camera.fovy = 20;
+    camera.fovy = 45;
     camera.projection = CAMERA_PERSPECTIVE;
 
     //cria mundo

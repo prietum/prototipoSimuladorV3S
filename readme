@@ -1,60 +1,44 @@
-Mapa de dependências
-    Dependências externas: 'raylib', 'raygui', 'box3d'.
-    'X->Y' lê-se 'X depende de Y'.
+//// ISSO É UM RASCUNHO ////
 
-    'main' coordena o programa, separando a parte de interface e simulação.
-    main.c -> gui.c
-    main.c -> sim.c
+# Simulador de futebol de robôs V3S da Titans - UnB/FCTE
 
-    'gui' é responsável pela renderização da interface.
-    gui.c -> raylib
-    gui.c -> raygui
-    gui.c -> gui.h
-    *raygui -> raylib (raygui é uma extensão de raylib)
+Este programa simula o futebol de robôs da liga VSSS. São robôs com dimensões de cerca de 7.5cm, controlados de forma autônoma.
 
-    'sim' é responsável pela simulação física.
-    sim.c -> box3d
-    sim.c -> sim.h
+## Funcionalidades
 
-Headers de configuração
-    'medidas.h' define medidas físicas, como as dimensões da arena e a massa dos robôs.
-    'partida.h' define configurações da partida, como a quantidade de robôs e de bolas.
-    'interface.h' define configurações da interface de usuário, como tamanho da janela.
+Pode iniciar uma partida com quantos robôs quiser em ambos os times. Pode simular com mais de uma bola também.
 
-Modo de uso
-    Instale CMake (mínimo 4.4.4).
-    Instale Make
-    Crie uma pasta 'build' na pasta raíz.
-    Dentro de 'build' faça 'cmake ..' para gerar o sistema de compilação.
-    Dentro de build, rode o sistema de compilação gerado.
-        O comando necessário dependerá de qual sistema de compilação você escolheu.
-        Normalmente é 'make' ou 'ninja'.
-    Rode o executável 'main'.
+Pode mudar de câmera apertando com as setas, ou entrar em vôo livre com WASD, QE e mouse.
 
-Como funciona?
-    Sistema de compilação
-    O projeto é feito de vários arquivos-fonte e headers, e os comandos necessários para compilar
-    todos eles são bastante extensos. Por isso, automatizamos isso com um sistema de compilação.
-    Make é um sistema de compilação, mas existem vários outros, como Ninja e etc.
-    Para compilar o projeto inteiro, basta rodar 'make', 'ninja', ou seja qual for o comando respectivo.
+Admite controle dos robôs por através de sockets. Leia mais abaixo.
 
-    CMake
-    Contudo, precisamos que o sistema de compilação descreva as relações de dependência do nosso 
-    projeto. Fazer isso à mão é difícil, especialmente quando essas relações mudam.
-    Para essa etapa, automatizamos com CMake. CMake gera sistemas de compilação, dada as relações
-    de dependência.
-    CMake ---GERA---> sistema de compilação ---QUE GERA---> programa
-    CMake também cuida para que os comandos estejam conforme o seu sistema operacional: Linux, Windows, Mac...
+## Sockets
 
-    Box3D
-    É uma biblioteca feita por Erin Catto, para simulação tridimensional. Amplamente utilizada tanto
-    para jogos quanto para projetos como o nosso. *Não abre janelas, nem renderiza nada.*
+Use sockets para enviar sinais para dentro do programa. Dessa forma, poderá controlar os robôs, assim como receber informações do estado de jogo.
+Existem duas sockets, uma para o time da esquerda e outra para o time da direita.
 
-    Raylib
-    É uma biblioteca feita por raysan5, para computação gráfica. Assim como Box3D, é bastante versátil.
-    Vale notar que ela só permite uma janela por vez. *Não simula física.*
+Time esquerdo: IP???, PORT???
+Time direito: IP???, PORT???
 
-    Raygui
-    Uma extensão de raylib que disponibiliza elementos de interface como botões, painéis, etc. Vêm como
-    um único arquivo 'raygui.h', conhecido como 'single-file header library'. Diferente de Raylib e
-    Box3D, *raygui não compila em binário*, ao invés disso, é inclusa (copiada) na fonte.
+Nota: você não precisa refazer a conexão com as sockets no segundo tempo. Basta apertar "trocar campos".
+
+## Prequesitos e como rodar
+
+Precisará de uma versão de CMake no mínimo 4.2.3.
+As dependências serão instaladas automaticamente.
+
+1. Baixe ou clone o repositório
+2. Abra o terminal no repositório
+3. Crie uma pasta /build no repositório
+4. Vá para /build
+5. Gere o sistema de compilação de com cmake ..
+6. Compile a fonte com o comando do sistema de compilação que escolheu
+7. Execute o binário
+
+## Bibliotecas utilizadas
+
+O programa usa as bibliotecas Box3D para simulação física e Raylib para computação gráfica e entrada de usuário.
+
+## Uso de IA
+
+Até então, LLM foi utilizada somente para pesquisas e buscas na internet. Não houve uso de genAI.
